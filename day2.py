@@ -1,16 +1,16 @@
 # Part 1
-# with open("day2_input.txt") as f:
-#     data = f.readlines()
-#     safe = 0
-#     for line in data:
-#         levels = [int(x) for x in line.split(" ")]
-#         monotonic = all(a <= b for a, b in zip(levels, levels[1:])) or all(
-#             a >= b for a, b in zip(levels, levels[1:])
-#         )
-#         adj = all(1 <= abs(a - b) <= 3 for a, b in zip(levels, levels[1:]))
-#         if monotonic and adj:
-#             safe += 1
-#     print(safe)
+with open("day2_input.txt") as f:
+    data = f.readlines()
+    safe = 0
+    for line in data:
+        levels = [int(x) for x in line.split(" ")]
+        monotonic = all(a <= b for a, b in zip(levels, levels[1:])) or all(
+            a >= b for a, b in zip(levels, levels[1:])
+        )
+        adj = all(1 <= abs(a - b) <= 3 for a, b in zip(levels, levels[1:]))
+        if monotonic and adj:
+            safe += 1
+    print(safe)
 
 
 # Part 2
