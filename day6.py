@@ -46,7 +46,6 @@ with open("day6_input.txt") as f:
             )
             if is_within_bounds(next_pos):
                 if grid[next_pos[0]][next_pos[1]] == "#":
-                    visited[pos].append(direction)
                     direction = rotate_right(direction)
                 else:
                     pos = next_pos
