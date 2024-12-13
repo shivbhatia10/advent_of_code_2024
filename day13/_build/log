@@ -1,0 +1,23 @@
+# dune build
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Shared cache location: /Users/shivbhatia/.cache/dune/db
+# Workspace root:
+# /Users/shivbhatia/Documents/AllFiles/dev/adventOfCode2024/day13
+# Auto-detected concurrency: 12
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /Users/shivbhatia/.opam/default/bin/ocamlc.opt -config > /var/folders/55/p48yj0hs7lsc2rb0l_087n3h0000gn/T/dune_05f963_output
+$ (cd _build/default && /Users/shivbhatia/.opam/default/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .day13.eobjs/byte -I .day13.eobjs/native -I /Users/shivbhatia/.opam/default/lib/re -I /Users/shivbhatia/.opam/default/lib/seq -intf-suffix .ml -no-alias-deps -opaque -o .day13.eobjs/native/dune__exe__Day13.cmx -c -impl day13.ml)
+> File "day13.ml", line 2, characters 0-1:
+> 2 | #require "re";;
+>     ^
+> Error: Syntax error
+[2]
