@@ -1,1 +1,1 @@
-All solutions in Python, with a few in OCaml where I had time to redo them.
+Started in Python, gradually moved to OCaml by around day 10.
