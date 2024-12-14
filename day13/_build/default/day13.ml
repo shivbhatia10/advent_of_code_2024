@@ -1,37 +1,3 @@
-[@@@warning "-3"]
-#require "re";;
-[@@@warning "+3"]
-open Re
-
-let input_file = "day13_input.txt"
-
-module Utils = struct
-  let string_of_char = String.make 1
-
-  let range a b =
-    let rec helper start = if start >= b then [] else start :: helper (start + 1) in
-    helper a
-
-  let read_file filename =
-    let ch = open_in filename in
-    let s = really_input_string ch (in_channel_length ch) in
-    let () = close_in ch in
-    s
-
-  let split_list_on_empty =
-    let rec helper acc current = function
-      | [] -> List.rev (List.rev current :: acc)
-      | "" :: t -> helper (List.rev current :: acc) [] t
-      | h :: t -> helper acc (h :: current) t
-    in
-    helper [] []
-
-  let print_para para = List.iter (fun x -> print_endline x) para
-  let get_paras s = String.split_on_char '\n' s |> split_list_on_empty
-  let paras = get_paras (read_file input_file)
-  let remove_last_char s = String.sub s 0 (String.length s - 1)
-end
-
 module Types = struct
   open Int64
 
@@ -42,47 +8,52 @@ end
 
 module IO = struct
   open Types
-  open Utils
   open Int64
+  open Re
 
-  let extract_num split term =
-    let pieces = String.split_on_char split term in
-    List.nth pieces 1 |> of_string
+  let read_file filename =
+    let ch = open_in filename in
+    let s = really_input_string ch (in_channel_length ch) in
+    let () = close_in ch in
+    s
 
-  let extract_button_delta line : button_delta =
-    let terms = String.split_on_char ' ' line in
-    let x_term, y_term = (List.nth terms 2 |> remove_last_char, List.nth terms 3) in
-    { x = extract_num '+' x_term; y = extract_num '+' y_term }
+  let digit_pattern = compile (seq [
+    group (rep1 digit)
+  ])
 
-  let extract_target line : target =
-    let terms = String.split_on_char ' ' line in
-    let x_term, y_term = (List.nth terms 1 |> remove_last_char, List.nth terms 2) in
-    { x = extract_num '=' x_term; y = extract_num '=' y_term }
+  let get_nums (file: string) =
+    all digit_pattern file
+    |> List.map (fun group -> Group.get group 1)
+    |> List.map of_string
 
-  let offset = 10000000000000L
-  let add_offset_to_target t = { x = add t.x offset; y = add t.y offset }
-
-  let process_para para : problem =
-    let first, second, third = (List.nth para 0, List.nth para 1, List.nth para 2) in
-    { a = extract_button_delta first; b = extract_button_delta second; t = extract_target third }
-
-  let process_para2 para : problem =
-    let first, second, third = (List.nth para 0, List.nth para 1, List.nth para 2) in
+  let nums_to_problem (ax, ay, bx, by, tx, ty) =
     {
-      a = extract_button_delta first;
-      b = extract_button_delta second;
-      t = extract_target third |> add_offset_to_target;
+      a = {x=ax;y=ay};
+      b={x=bx;y=by};
+      t={x=tx;y=ty}
     }
+
+  let rec get_chunks = function
+    | ax::ay::bx::by::tx::ty::tail -> (ax,ay,bx,by,tx,ty)::(get_chunks tail)
+    | _ -> []
+  
+  let get_problems filename =
+    read_file filename
+    |> get_nums
+    |> get_chunks
+    |> List.map nums_to_problem
 end
 
 module AoC = struct
-  open Utils
   open Types
   open IO
   open Int64
 
-  let problems1 = List.map process_para paras
-  let problems2 = List.map process_para2 paras
+  let add_offset_to_target offset t = { x = add t.x offset; y = add t.y offset }
+  let add_offset_to_problem offset p =
+    {
+      a=p.a;b=p.b;t = (add_offset_to_target offset p.t)
+    }
 
   let get_maybe_solution (prob : problem) =
     let { a; b; t } = prob in
@@ -108,7 +79,13 @@ module AoC = struct
     List.fold_left (fun acc best_sol -> Int64.add acc (get_tokens best_sol)) Int64.zero valid_sols
 end
 
+open IO
 open AoC
+
+let input_file = "day13_input.txt"
+
+let problems1 = get_problems input_file
+let problems2 = List.map (add_offset_to_problem 10000000000000L) problems1
 
 let () =
   fewest_tokens problems1 |> Int64.to_string |> print_endline;
