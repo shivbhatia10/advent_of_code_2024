@@ -18,9 +18,6 @@ module IO = struct
   let get_nums (file : string) =
     all digit_pattern file |> List.map (fun group -> Group.get group 1) |> List.map int_of_string
 
-  (* let nums_to_problem (ax, ay, bx, by, tx, ty) =
-     { a = { x = ax; y = ay }; b = { x = bx; y = by }; t = { x = tx; y = ty } } *)
-
   let rec get_chunks = function
     | px :: py :: vx :: vy :: tail -> ((px, py), (vx, vy)) :: get_chunks tail
     | _ -> []
