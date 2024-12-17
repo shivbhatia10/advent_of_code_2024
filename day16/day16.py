@@ -1,6 +1,6 @@
 from heapq import *
 
-input_file = "day16_input.txt"
+input_file = "day16_test.txt"
 
 with open(input_file) as f:
     grid = [list(row) for row in f.read().split("\n")]
