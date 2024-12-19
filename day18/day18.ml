@@ -31,33 +31,6 @@ module Memory = struct
     { n; m; bytes = new_bytes }
   ;;
 
-  (* let dirs = [ 0, 1; 0, -1; 1, 0; -1, 0 ]
-  let dir_to_char = function
-    | 0, 1 -> '>'
-    | 0, -1 -> '<'
-    | 1, 0 -> 'v'
-    | -1, 0 -> '^'
-    | _ -> raise (Invalid_argument "Invalid dx and dy")
-
-  let bfs (p:byte_pos) (t:byte_pos) (memory: memory) : (memory * int) option =
-    let rec loop (d: Deque) =
-      match Deque.peek_front d with
-      | None -> None
-      | Some (curr_dist, curr_p, curr_memory) ->
-        if curr_p=t then Some (curr_memory, curr_dist)
-        else
-          let new_memory = set memory p 'O' in
-          let next_points = List.map ~f(fun (dx, dy) -> ) dirs
-        
-      in
-    loop (Deque.of_array [(0, p, memory)])
-
-  let shortest_path_to_exit (memory : memory) : (memory * int) option =
-    let p = {x=0;y=0} in
-    let t = {x=memory.n - 1; y=memory.m - 1} in
-    bfs p t memory
-  ;; *)
-
   let corrupt_all (memory : memory) (list_byte_pos : byte_pos list) : memory =
     List.fold list_byte_pos ~init:memory ~f:(fun curr_memory byte_pos ->
       set curr_memory byte_pos '#')

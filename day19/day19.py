@@ -1,6 +1,6 @@
 from functools import cache
 
-input_filename = "day19_input.txt"
+input_filename = "day19_test.txt"
 
 with open(input_filename) as f:
     lines: list[str] = f.read().split("\n")
