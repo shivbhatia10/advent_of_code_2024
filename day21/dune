@@ -1,0 +1,5 @@
+(executable
+ (name day21)
+ (libraries re core)
+ (flags
+  (:standard -w -a)))
