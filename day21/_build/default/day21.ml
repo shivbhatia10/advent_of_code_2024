@@ -1,4 +1,4 @@
-(* Note: if you always go right before down and up before left you're fine *)
+(* Prioritise left then down then up then right *)
 
 open! Core
 
@@ -74,14 +74,21 @@ let shortest_dir_seq_to_get_num_seq (num_seq : num_seq) : dir_seq =
       let dy = y' - y in
       if dx >= 0 && dy >= 0
       then
-        List.init dy ~f:(fun _ -> RIGHT)
-        @ List.init dx ~f:(fun _ -> DOWN)
-        @ [ A_DIR ]
-        @ go (x', y') keys
+        if y = 0 && x' = 3
+        then
+          List.init dy ~f:(fun _ -> RIGHT)
+          @ List.init dx ~f:(fun _ -> DOWN)
+          @ [ A_DIR ]
+          @ go (x', y') keys
+        else
+          List.init dx ~f:(fun _ -> DOWN)
+          @ List.init dy ~f:(fun _ -> RIGHT)
+          @ [ A_DIR ]
+          @ go (x', y') keys
       else if dx >= 0 && dy < 0
       then
-        List.init dx ~f:(fun _ -> DOWN)
-        @ List.init (-dy) ~f:(fun _ -> LEFT)
+        List.init (-dy) ~f:(fun _ -> LEFT)
+        @ List.init dx ~f:(fun _ -> DOWN)
         @ [ A_DIR ]
         @ go (x', y') keys
       else if dx < 0 && dy >= 0
@@ -90,7 +97,7 @@ let shortest_dir_seq_to_get_num_seq (num_seq : num_seq) : dir_seq =
         @ List.init dy ~f:(fun _ -> RIGHT)
         @ [ A_DIR ]
         @ go (x', y') keys
-      else if y' = 3
+      else if x = 3 && y' = 0
       then
         List.init (-dx) ~f:(fun _ -> UP)
         @ List.init (-dy) ~f:(fun _ -> LEFT)
@@ -120,19 +127,33 @@ let shortest_dir_seq_to_get_dir_seq (dir_seq : dir_seq) : dir_seq =
         @ go (x', y') keys
       else if dx >= 0 && dy < 0
       then
-        List.init dx ~f:(fun _ -> DOWN)
-        @ List.init (-dy) ~f:(fun _ -> LEFT)
-        @ [ A_DIR ]
-        @ go (x', y') keys
+        if x = 0 && y' = 0
+        then
+          List.init dx ~f:(fun _ -> DOWN)
+          @ List.init (-dy) ~f:(fun _ -> LEFT)
+          @ [ A_DIR ]
+          @ go (x', y') keys
+        else
+          List.init (-dy) ~f:(fun _ -> LEFT)
+          @ List.init dx ~f:(fun _ -> DOWN)
+          @ [ A_DIR ]
+          @ go (x', y') keys
       else if dx < 0 && dy >= 0
       then
-        List.init dy ~f:(fun _ -> RIGHT)
-        @ List.init (-dx) ~f:(fun _ -> UP)
-        @ [ A_DIR ]
-        @ go (x', y') keys
+        if y = 0 && x' = 0
+        then
+          List.init dy ~f:(fun _ -> RIGHT)
+          @ List.init (-dx) ~f:(fun _ -> UP)
+          @ [ A_DIR ]
+          @ go (x', y') keys
+        else
+          List.init (-dx) ~f:(fun _ -> UP)
+          @ List.init dy ~f:(fun _ -> RIGHT)
+          @ [ A_DIR ]
+          @ go (x', y') keys
       else
-        List.init (-dx) ~f:(fun _ -> UP)
-        @ List.init (-dy) ~f:(fun _ -> LEFT)
+        List.init (-dy) ~f:(fun _ -> LEFT)
+        @ List.init (-dx) ~f:(fun _ -> UP)
         @ [ A_DIR ]
         @ go (x', y') keys
   in
@@ -186,13 +207,15 @@ let get_numeric_part (code : num_seq) : int =
     | A_NUM -> raise Invalid_code)
 ;;
 
-let get_complexity (code : num_seq) : int =
+let apply_n_times f n x =
+  List.init n ~f:(fun _ -> f) |> List.fold ~init:x ~f:(fun acc f -> f acc)
+;;
+
+let get_complexity (code : num_seq) (num_robots : int) : int =
   let numeric_part = get_numeric_part code in
+  let first_dir_seq = code |> shortest_dir_seq_to_get_num_seq in
   let my_dir_seq =
-    code
-    |> shortest_dir_seq_to_get_num_seq
-    |> shortest_dir_seq_to_get_dir_seq
-    |> shortest_dir_seq_to_get_dir_seq
+    apply_n_times shortest_dir_seq_to_get_dir_seq num_robots first_dir_seq
   in
   let complexity = numeric_part * List.length my_dir_seq in
   let () =
@@ -208,7 +231,7 @@ let get_complexity (code : num_seq) : int =
 ;;
 
 let total_complexity =
-  List.fold test_inputs ~init:0 ~f:(fun acc input -> acc + get_complexity input)
+  List.fold inputs ~init:0 ~f:(fun acc input -> acc + get_complexity input 2)
 ;;
 
 let () = printf "Total complexity: %d\n" total_complexity
