@@ -1,1 +1,1 @@
-Started in Python, gradually moved to OCaml by around day 10.
+AoC 2024
